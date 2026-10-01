@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Joys General Store – Local Store Online</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#faf7f0;--card:#ffffff;--text:#1f2a24;--muted:#6b7a71;--brand:#2e7d32;--brand-d:#1b5e20;
+  --accent:#f59e0b;--border:#e6e0d2;--danger:#c62828;--shadow:0 2px 10px rgba(0,0,0,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121a15;--card:#1b2620;--text:#eef3ef;--muted:#9bb0a3;--brand:#4caf50;--brand-d:#66bb6a;
+    --accent:#fbbf24;--border:#2b3a31;--danger:#ef5350;--shadow:0 2px 10px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121a15;--card:#1b2620;--text:#eef3ef;--muted:#9bb0a3;--brand:#4caf50;--brand-d:#66bb6a;
+  --accent:#fbbf24;--border:#2b3a31;--danger:#ef5350;--shadow:0 2px 10px rgba(0,0,0,.4);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.45}
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;max-width:100%}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--brand-d);color:#fff;box-shadow:var(--shadow)}
+.bar{max-width:1150px;margin:auto;display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.25rem;flex:1;min-width:150px}
+.logo small{display:block;font-weight:400;font-size:.72rem;opacity:.85}
+.hbtn{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:10px;padding:8px 12px;position:relative}
+.hbtn:hover{background:rgba(255,255,255,.28)}
+.badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#000;border-radius:999px;font-size:.7rem;font-weight:700;min-width:20px;height:20px;display:grid;place-items:center;padding:0 5px}
+.hero{max-width:1150px;margin:16px auto 0;padding:22px;border-radius:16px;background:linear-gradient(120deg,#2e7d32,#f59e0b);color:#fff;margin-inline:14px}
+@media(min-width:1180px){.hero{margin-inline:auto}}
+.hero h1{margin:0 0 4px;font-size:1.6rem}
+.hero p{margin:0;opacity:.95}
+main{max-width:1150px;margin:auto;padding:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 14px}
+.toolbar input[type=search]{flex:1;min-width:180px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:6px 14px}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.range{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.pimg{height:150px;display:grid;place-items:center;font-size:4.5rem;cursor:pointer}
+.pbody{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pname{font-weight:700;cursor:pointer}
+.pdesc{color:var(--muted);font-size:.86rem;flex:1}
+.stars{color:var(--accent);font-size:.9rem;letter-spacing:1px}
+.stars span{color:var(--muted);font-size:.78rem;letter-spacing:0;margin-left:4px}
+.prow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{font-weight:800;font-size:1.1rem}
+.price small{font-weight:400;color:var(--muted);font-size:.75rem}
+.btn{background:var(--brand);color:#fff;border:0;border-radius:10px;padding:8px 14px;font-weight:600}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+.btn.danger{background:var(--danger)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+/* overlays */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40;align-items:center;justify-content:center;padding:14px}
+.overlay.open{display:flex}
+.modal{background:var(--card);color:var(--text);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow:auto;padding:18px;position:relative}
+.modal h2{margin-top:0}
+.x{position:absolute;top:10px;right:12px;background:none;border:0;font-size:1.5rem;color:var(--muted)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--card);z-index:50;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.25);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.open{transform:none}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
+.dhead h2{margin:0;font-size:1.15rem}
+.ditems{flex:1;overflow:auto;padding:10px 16px}
+.item{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border)}
+.item .em{font-size:2rem;width:46px;text-align:center}
+.item .info{flex:1}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+.dfoot{padding:14px 16px;border-top:1px solid var(--border)}
+.line{display:flex;justify-content:space-between;margin:4px 0}
+.line.total{font-weight:800;font-size:1.1rem}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.field label{font-size:.85rem;color:var(--muted)}
+.review{border-top:1px solid var(--border);padding:8px 0;font-size:.9rem}
+.review b{margin-right:6px}
+.timeline{list-style:none;padding:0;margin:14px 0}
+.timeline li{display:flex;gap:12px;align-items:flex-start;padding:8px 0;color:var(--muted);position:relative}
+.timeline li .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:grid;place-items:center;font-size:.7rem;background:var(--card);flex:none}
+.timeline li.done{color:var(--text)}
+.timeline li.done .dot{background:var(--brand);border-color:var(--brand);color:#fff}
+.timeline li.now .dot{border-color:var(--accent);box-shadow:0 0 0 4px rgba(245,158,11,.3)}
+.faq details{border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:8px}
+.faq summary{cursor:pointer;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(80px);background:#222;color:#fff;padding:10px 18px;border-radius:999px;z-index:99;transition:transform .25s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:24px 10px}
+.starpick button{background:none;border:0;font-size:1.6rem;color:var(--border);padding:0 2px}
+.starpick button.on{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">🛒 Joys General Store<small>Your neighbourhood store, now online</small></div>
+    <button class="hbtn" id="btnTrack">📦 Track Order</button>
+    <button class="hbtn" id="btnSupport">💬 Support</button>
+    <button class="hbtn" id="btnCart">🛍️ Cart <span class="badge" id="cartCount">0</span></button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Fresh from your local store to your doorstep</h1>
+  <p>Groceries, snacks and local specialities. Free delivery on orders above ₹499.</p>
+</div>
+
+<main>
+  <div class="toolbar">
+    <input type="search" id="search" placeholder="Search products…" aria-label="Search products">
+    <select id="sort" aria-label="Sort products">
+      <option value="default">Sort: Featured</option>
+      <option value="plh">Price: Low to High</option>
+      <option value="phl">Price: High to Low</option>
+      <option value="rating">Top Rated</option>
+      <option value="az">Name: A to Z</option>
+    </select>
+    <div class="range">Max ₹<span id="maxLabel">1000</span>
+      <input type="range" id="maxPrice" min="50" max="1000" step="10" value="1000" aria-label="Maximum price">
+    </div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">No products match your filters 😕</div>
+</main>
+
+<footer>© Joys General Store · Made for Prodigy Infotech Internship – Task 03</footer>
+
+<!-- Product modal -->
+<div class="overlay" id="ovProduct"><div class="modal" id="productBox"></div></div>
+
+<!-- Cart drawer -->
+<div class="overlay" id="ovCart"></div>
+<aside class="drawer" id="drawer" aria-label="Shopping cart">
+  <div class="dhead"><h2>🛍️ Your Cart</h2><button class="x" style="position:static" id="closeCart">×</button></div>
+  <div class="ditems" id="cartItems"></div>
+  <div class="dfoot" id="cartFoot"></div>
+</aside>
+
+<!-- Checkout modal -->
+<div class="overlay" id="ovCheckout"><div class="modal">
+  <button class="x" data-close="ovCheckout">×</button>
+  <h2>Checkout</h2>
+  <div class="field"><label>Full name</label><input id="cName" placeholder="Your name"></div>
+  <div class="field"><label>Phone</label><input id="cPhone" inputmode="tel" placeholder="10-digit mobile number"></div>
+  <div class="field"><label>Delivery address</label><textarea id="cAddr" rows="3" placeholder="Door no, street, area, Coimbatore"></textarea></div>
+  <div class="field"><label>Payment method</label>
+    <select id="cPay"><option>Cash on Delivery</option><option>UPI on Delivery</option><option>Card on Delivery</option></select>
+  </div>
+  <div class="line total"><span>Amount payable</span><span id="cTotal"></span></div>
+  <p id="cErr" style="color:var(--danger);margin:6px 0"></p>
+  <button class="btn" style="width:100%" id="placeOrder">Place Order</button>
+</div></div>
+
+<!-- Track modal -->
+<div class="overlay" id="ovTrack"><div class="modal">
+  <button class="x" data-close="ovTrack">×</button>
+  <h2>📦 Track Your Order</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="trackId" placeholder="Enter Order ID e.g. JGS-1234" style="flex:1;min-width:180px">
+    <button class="btn" id="trackBtn">Track</button>
+  </div>
+  <div id="myOrders" style="margin-top:10px"></div>
+  <div id="trackResult"></div>
+</div></div>
+
+<!-- Support modal -->
+<div class="overlay" id="ovSupport"><div class="modal">
+  <button class="x" data-close="ovSupport">×</button>
+  <h2>💬 Customer Support</h2>
+  <div class="faq">
+    <details><summary>What are your delivery hours?</summary><p>We deliver daily from 8 AM to 8 PM within Coimbatore city limits.</p></details>
+    <details><summary>Is there a minimum order value?</summary><p>No minimum, but delivery is free above ₹499. Otherwise a ₹40 fee applies.</p></details>
+    <details><summary>Can I return a product?</summary><p>Yes, report any damaged or wrong item within 24 hours of delivery for a refund or replacement.</p></details>
+    <details><summary>How can I pay?</summary><p>Cash, UPI or card on delivery.</p></details>
+  </div>
+  <h3>Still need help? Message us</h3>
+  <div class="field"><label>Your name</label><input id="sName"></div>
+  <div class="field"><label>Message</label><textarea id="sMsg" rows="3"></textarea></div>
+  <button class="btn" id="sendSupport">Send Message</button>
+  <p id="sOk" style="color:var(--brand)"></p>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Data ---------- */
+const PRODUCTS = [
+ {id:1,name:"Kovai Filter Coffee Powder",cat:"Beverages",price:320,unit:"500 g",emoji:"☕",bg:["#8d6e63","#d7ccc8"],desc:"Freshly ground 80:20 coffee-chicory blend, strong and aromatic.",rating:4.7,reviews:[{n:"Priya",r:5,t:"Perfect morning filter coffee!"},{n:"Karthik",r:4,t:"Strong flavour, good value."}]},
+ {id:2,name:"Pollachi Coconut Oil",cat:"Groceries",price:210,unit:"1 L",emoji:"🥥",bg:["#a5d6a7","#e8f5e9"],desc:"Cold-pressed coconut oil from Pollachi farms. Pure and chemical free.",rating:4.6,reviews:[{n:"Meena",r:5,t:"Authentic smell and taste."}]},
+ {id:3,name:"Ponni Boiled Rice",cat:"Groceries",price:640,unit:"10 kg",emoji:"🍚",bg:["#fff9c4","#fffde7"],desc:"Premium aged Ponni rice, ideal for daily meals and idli batter.",rating:4.4,reviews:[{n:"Suresh",r:4,t:"Cooks fluffy, no stones."}]},
+ {id:4,name:"Banana Chips (Nendran)",cat:"Snacks",price:120,unit:"250 g",emoji:"🍌",bg:["#ffe082","#fff8e1"],desc:"Crispy Kerala-style chips fried in coconut oil.",rating:4.8,reviews:[{n:"Divya",r:5,t:"Very crunchy and fresh!"},{n:"Arun",r:5,t:"Kids love it."}]},
+ {id:5,name:"Murukku Mixture Pack",cat:"Snacks",price:95,unit:"200 g",emoji:"🥨",bg:["#ffcc80","#fff3e0"],desc:"Homemade murukku, thattai and sev mix. Perfect tea-time snack.",rating:4.3,reviews:[]},
+ {id:6,name:"Organic Jaggery Powder",cat:"Groceries",price:85,unit:"500 g",emoji:"🟤",bg:["#bcaaa4","#efebe9"],desc:"Chemical-free jaggery powder, a healthy alternative to sugar.",rating:4.5,reviews:[{n:"Lakshmi",r:5,t:"Great for payasam."}]},
+ {id:7,name:"Mixed Millet Flour",cat:"Groceries",price:140,unit:"1 kg",emoji:"🌾",bg:["#dcedc8","#f1f8e9"],desc:"Ragi, kambu and cholam blend for dosa, roti and porridge.",rating:4.2,reviews:[]},
+ {id:8,name:"Fresh Tender Coconut Water",cat:"Beverages",price:45,unit:"1 piece",emoji:"🌴",bg:["#b2ebf2","#e0f7fa"],desc:"Naturally sweet and hydrating, freshly harvested.",rating:4.6,reviews:[{n:"Ravi",r:4,t:"Very fresh and cold."}]},
+ {id:9,name:"Rose Milk Syrup",cat:"Beverages",price:130,unit:"750 ml",emoji:"🌹",bg:["#f8bbd0","#fce4ec"],desc:"Classic rose syrup, mix with chilled milk for a refreshing drink.",rating:4.1,reviews:[]},
+ {id:10,name:"Fresh Vegetable Basket",cat:"Fresh",price:250,unit:"3 kg",emoji:"🥕",bg:["#c8e6c9","#f1f8e9"],desc:"Seasonal vegetables sourced daily from Kovai farms.",rating:4.5,reviews:[{n:"Anitha",r:5,t:"Always fresh, good variety."}]},
+ {id:11,name:"Farm Fresh Banana",cat:"Fresh",price:60,unit:"1 dozen",emoji:"🍌",bg:["#fff59d","#fffde7"],desc:"Naturally ripened Poovan bananas from local growers.",rating:4.4,reviews:[]},
+ {id:12,name:"Sandal Soap (Pack of 3)",cat:"Home Care",price:150,unit:"3 x 75 g",emoji:"🧼",bg:["#ffe0b2","#fff3e0"],desc:"Traditional sandalwood soap with a soothing fragrance.",rating:4.3,reviews:[]},
+ {id:13,name:"Neem Herbal Toothpaste",cat:"Home Care",price:75,unit:"150 g",emoji:"🌿",bg:["#a5d6a7","#e8f5e9"],desc:"Herbal toothpaste with neem and clove for healthy gums.",rating:4.0,reviews:[]},
+ {id:14,name:"Steel Filter Coffee Tumbler Set",cat:"Home Care",price:390,unit:"Set of 2",emoji:"🥃",bg:["#cfd8dc","#eceff1"],desc:"Stainless steel dabara tumbler set for authentic South Indian coffee.",rating:4.7,reviews:[]},
+ {id:15,name:"Ghee (Pure Cow)",cat:"Groceries",price:480,unit:"500 ml",emoji:"🧈",bg:["#ffe082","#fff8e1"],desc:"Traditional bilona-method pure cow ghee, rich aroma and taste.",rating:4.8,reviews:[{n:"Kavitha",r:5,t:"Just like homemade ghee, superb quality."}]},
+ {id:16,name:"Mixed Namkeen Combo",cat:"Snacks",price:110,unit:"400 g",emoji:"🥜",bg:["#ffcc80","#fff3e0"],desc:"Assorted spicy namkeen combo pack, perfect for guests and evening snacks.",rating:4.4,reviews:[]},
+ {id:17,name:"Herbal Hair Oil",cat:"Home Care",price:160,unit:"200 ml",emoji:"🧴",bg:["#c5e1a5","#f1f8e9"],desc:"Ayurvedic blend of coconut, curry leaf and hibiscus for healthy hair growth.",rating:4.3,reviews:[{n:"Sowmya",r:4,t:"Nice fragrance, reduces hair fall."}]},
+ {id:18,name:"Idli Dosa Batter",cat:"Fresh",price:90,unit:"1 kg",emoji:"🥞",bg:["#e0f2f1","#f1f8e9"],desc:"Freshly ground, ready-to-use idli dosa batter made daily in-house.",rating:4.6,reviews:[{n:"Ganesh",r:5,t:"Soft idlis every time, very fresh."}]}
+];
+const FREE_ABOVE=499, DELIVERY=40;
+
+/* ---------- Safe storage ---------- */
+const mem={};
+const store={
+  get(k,def){try{const v=localStorage.getItem(k);if(v!==null)return JSON.parse(v);}catch(e){} return k in mem?mem[k]:def;},
+  set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+let cart=store.get("kfm_cart",{});
+let orders=store.get("kfm_orders",[]);
+let userReviews=store.get("kfm_reviews",{});
+let state={cat:"All",q:"",sort:"default",max:1000};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>"₹"+n.toLocaleString("en-IN");
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),1800);}
+const allReviews=p=>[...(userReviews[p.id]||[]),...p.reviews];
+const avgRating=p=>{const r=allReviews(p);if(!r.length)return p.rating;const s=r.reduce((a,b)=>a+b.r,0)/r.length;return Math.round(((s*r.length+p.rating*3)/(r.length+3))*10)/10;};
+const starStr=n=>"★".repeat(Math.round(n))+"☆".repeat(5-Math.round(n));
+
+/* ---------- Product listing ---------- */
+function renderChips(){
+  const cats=["All",...new Set(PRODUCTS.map(p=>p.cat))];
+  $("chips").innerHTML=cats.map(c=>`<button class="chip ${c===state.cat?"on":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+}
+function renderGrid(){
+  let list=PRODUCTS.filter(p=>(state.cat==="All"||p.cat===state.cat)&&p.price<=state.max&&(p.name+p.desc+p.cat).toLowerCase().includes(state.q.toLowerCase()));
+  if(state.sort==="plh")list.sort((a,b)=>a.price-b.price);
+  if(state.sort==="phl")list.sort((a,b)=>b.price-a.price);
+  if(state.sort==="rating")list.sort((a,b)=>avgRating(b)-avgRating(a));
+  if(state.sort==="az")list.sort((a,b)=>a.name.localeCompare(b.name));
+  $("empty").style.display=list.length?"none":"block";
+  $("grid").innerHTML=list.map(p=>`
+   <div class="card">
+     <div class="pimg" data-view="${p.id}" style="background:linear-gradient(135deg,${p.bg[0]},${p.bg[1]})" role="img" aria-label="${esc(p.name)}">${p.emoji}</div>
+     <div class="pbody">
+       <div class="pname" data-view="${p.id}">${esc(p.name)}</div>
+       <div class="stars">${starStr(avgRating(p))}<span>${avgRating(p)} (${allReviews(p).length})</span></div>
+       <div class="pdesc">${esc(p.desc)}</div>
+       <div class="prow"><div class="price">${money(p.price)} <small>/ ${esc(p.unit)}</small></div>
+       <button class="btn" data-add="${p.id}">Add</button></div>
+     </div>
+   </div>`).join("");
+}
+
+/* ---------- Cart ---------- */
+function saveCart(){store.set("kfm_cart",cart);renderCart();}
+function cartTotals(){
+  let sub=0,count=0;
+  for(const id in cart){const p=PRODUCTS.find(x=>x.id==id);if(p){sub+=p.price*cart[id];count+=cart[id];}}
+  const delivery=sub===0?0:(sub>=FREE_ABOVE?0:DELIVERY);
+  return {sub,count,delivery,total:sub+delivery};
+}
+function addToCart(id,n=1){cart[id]=(cart[id]||0)+n;if(cart[id]<=0)delete cart[id];saveCart();}
+function renderCart(){
+  const t=cartTotals();
+  $("cartCount").textContent=t.count;
+  const ids=Object.keys(cart);
+  $("cartItems").innerHTML=ids.length?ids.map(id=>{const p=PRODUCTS.find(x=>x.id==id);return `
+    <div class="item"><div class="em">${p.emoji}</div>
+    <div class="info"><b>${esc(p.name)}</b><div style="color:var(--muted);font-size:.85rem">${money(p.price)} · ${esc(p.unit)}</div></div>
+    <div class="qty"><button data-dec="${id}">−</button><b>${cart[id]}</b><button data-inc="${id}">+</button></div></div>`}).join(""):`<div class="empty">Your cart is empty 🛒</div>`;
+  $("cartFoot").innerHTML=ids.length?`
+    <div class="line"><span>Subtotal</span><span>${money(t.sub)}</span></div>
+    <div class="line"><span>Delivery</span><span>${t.delivery?money(t.delivery):"FREE"}</span></div>
+    ${t.sub<FREE_ABOVE?`<div style="font-size:.8rem;color:var(--muted)">Add ${money(FREE_ABOVE-t.sub)} more for free delivery</div>`:""}
+    <div class="line total"><span>Total</span><span>${money(t.total)}</span></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><button class="btn ghost" id="clearCart">Clear</button><button class="btn" style="flex:1" id="goCheckout">Checkout</button></div>`:"";
+}
+function openCart(o){$("drawer").classList.toggle("open",o);$("ovCart").classList.toggle("open",o);}
+
+/* ---------- Product detail + reviews ---------- */
+let pickRating=5;
+function openProduct(id){
+  const p=PRODUCTS.find(x=>x.id==id);
+  const revs=allReviews(p);
+  $("productBox").innerHTML=`
+   <button class="x" data-close="ovProduct">×</button>
+   <div class="pimg" style="background:linear-gradient(135deg,${p.bg[0]},${p.bg[1]});border-radius:12px;height:180px;cursor:default">${p.emoji}</div>
+   <h2 style="margin:12px 0 4px">${esc(p.name)}</h2>
+   <div class="stars">${starStr(avgRating(p))}<span>${avgRating(p)} · ${revs.length} reviews</span></div>
+   <p>${esc(p.desc)}</p>
+   <div class="prow"><div class="price">${money(p.price)} <small>/ ${esc(p.unit)}</small></div><button class="btn" data-add="${p.id}">Add to Cart</button></div>
+   <h3>Customer Reviews</h3>
+   ${revs.length?revs.map(r=>`<div class="review"><b>${esc(r.n)}</b><span class="stars">${starStr(r.r)}</span><div>${esc(r.t)}</div></div>`).join(""):`<div class="review" style="color:var(--muted)">No reviews yet. Be the first!</div>`}
+   <h3>Write a review</h3>
+   <div class="starpick" id="starpick">${[1,2,3,4,5].map(i=>`<button data-star="${i}" class="${i<=pickRating?"on":""}">★</button>`).join("")}</div>
+   <div class="field"><input id="rName" placeholder="Your name"></div>
+   <div class="field"><textarea id="rText" rows="2" placeholder="Share your experience"></textarea></div>
+   <button class="btn" data-submitreview="${p.id}">Submit Review</button>`;
+  $("ovProduct").classList.add("open");
+}
+
+/* ---------- Orders & tracking ---------- */
+const STAGES=["Order Placed","Packed at Store","Out for Delivery","Delivered"];
+const STAGE_MS=20000; // demo: each stage advances every 20 seconds
+function stageOf(o){return Math.min(3,Math.floor((Date.now()-o.time)/STAGE_MS));}
+function placeOrder(){
+  const name=$("cName").value.trim(),phone=$("cPhone").value.trim(),addr=$("cAddr").value.trim();
+  if(!name||!addr){$("cErr").textContent="Please enter your name and address.";return;}
+  if(!/^[6-9]\d{9}$/.test(phone)){$("cErr").textContent="Enter a valid 10-digit mobile number.";return;}
+  const t=cartTotals();
+  const items=Object.keys(cart).map(id=>{const p=PRODUCTS.find(x=>x.id==id);return{name:p.name,qty:cart[id],price:p.price,emoji:p.emoji};});
+  const order={id:"JGS-"+Math.floor(1000+Math.random()*9000),name,phone,addr,pay:$("cPay").value,items,total:t.total,time:Date.now()};
+  orders.unshift(order);store.set("kfm_orders",orders);
+  cart={};saveCart();
+  $("ovCheckout").classList.remove("open");openCart(false);
+  ["cName","cPhone","cAddr"].forEach(i=>$(i).value="");$("cErr").textContent="";
+  toast("Order placed! ID: "+order.id);
+  openTrack(order.id);
+}
+let trackTimer=null;
+function renderTrack(id){
+  const o=orders.find(x=>x.id.toLowerCase()===String(id).trim().toLowerCase());
+  if(!o){$("trackResult").innerHTML=`<p style="color:var(--danger)">Order not found. Check the ID and try again.</p>`;return;}
+  const s=stageOf(o);
+  $("trackResult").innerHTML=`
+   <h3>Order ${esc(o.id)}</h3>
+   <div style="color:var(--muted);font-size:.85rem">${new Date(o.time).toLocaleString()} · ${esc(o.pay)}</div>
+   <ul class="timeline">${STAGES.map((st,i)=>`<li class="${i<=s?"done":""} ${i===s&&s<3?"now":""}"><span class="dot">${i<=s?"✓":""}</span><div><b>${st}</b></div></li>`).join("")}</ul>
+   <div>${o.items.map(i=>`${i.emoji} ${esc(i.name)} × ${i.qty}`).join("<br>")}</div>
+   <div class="line total" style="margin-top:8px"><span>Total paid</span><span>${money(o.total)}</span></div>
+   <div style="color:var(--muted);font-size:.85rem;margin-top:6px">Deliver to: ${esc(o.name)}, ${esc(o.addr)}</div>
+   <div style="color:var(--muted);font-size:.75rem;margin-top:6px">Demo: status advances automatically every 20 seconds.</div>`;
+}
+function openTrack(id){
+  $("ovTrack").classList.add("open");
+  $("myOrders").innerHTML=orders.length?`<div style="font-size:.85rem;color:var(--muted)">Your recent orders:</div><div class="chips" style="margin-top:6px">${orders.slice(0,5).map(o=>`<button class="chip" data-order="${o.id}">${o.id}</button>`).join("")}</div>`:"";
+  clearInterval(trackTimer);
+  if(id){$("trackId").value=id;renderTrack(id);trackTimer=setInterval(()=>{if($("ovTrack").classList.contains("open")&&$("trackId").value)renderTrack($("trackId").value);},2000);}
+  else $("trackResult").innerHTML="";
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button,[data-view]");if(!t)return;
+  if(t.dataset.cat){state.cat=t.dataset.cat;renderChips();renderGrid();}
+  else if(t.dataset.add){addToCart(+t.dataset.add);toast("Added to cart ✔");}
+  else if(t.dataset.view){openProduct(t.dataset.view);}
+  else if(t.dataset.inc){addToCart(+t.dataset.inc,1);}
+  else if(t.dataset.dec){addToCart(+t.dataset.dec,-1);}
+  else if(t.dataset.close){$(t.dataset.close).classList.remove("open");clearInterval(trackTimer);}
+  else if(t.dataset.star){pickRating=+t.dataset.star;[...$("starpick").children].forEach((b,i)=>b.classList.toggle("on",i<pickRating));}
+  else if(t.dataset.submitreview){
+    const id=+t.dataset.submitreview,txt=$("rText").value.trim(),n=$("rName").value.trim()||"Guest";
+    if(!txt){toast("Please write something");return;}
+    (userReviews[id]=userReviews[id]||[]).unshift({n,r:pickRating,t:txt});
+    store.set("kfm_reviews",userReviews);openProduct(id);renderGrid();toast("Thanks for your review!");
+  }
+  else if(t.dataset.order){$("trackId").value=t.dataset.order;openTrack(t.dataset.order);}
+  else if(t.id==="clearCart"){cart={};saveCart();}
+  else if(t.id==="goCheckout"){openCart(false);$("cTotal").textContent=money(cartTotals().total);$("ovCheckout").classList.add("open");}
+});
+$("btnCart").onclick=()=>openCart(true);
+$("closeCart").onclick=()=>openCart(false);
+$("ovCart").onclick=()=>openCart(false);
+$("btnTrack").onclick=()=>openTrack(orders[0]?orders[0].id:null);
+$("btnSupport").onclick=()=>$("ovSupport").classList.add("open");
+$("placeOrder").onclick=placeOrder;
+$("trackBtn").onclick=()=>{const v=$("trackId").value;if(!v.trim())return;openTrack(v);};
+$("sendSupport").onclick=()=>{
+  if(!$("sMsg").value.trim()){$("sOk").textContent="";toast("Please type a message");return;}
+  const msgs=store.get("kfm_support",[]);msgs.push({n:$("sName").value,m:$("sMsg").value,t:Date.now()});store.set("kfm_support",msgs);
+  $("sMsg").value="";$("sOk").textContent="✔ Message sent! Our team will call you within 24 hours.";
+};
+$("search").oninput=e=>{state.q=e.target.value;renderGrid();};
+$("sort").onchange=e=>{state.sort=e.target.value;renderGrid();};
+$("maxPrice").oninput=e=>{state.max=+e.target.value;$("maxLabel").textContent=e.target.value;renderGrid();};
+document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("mousedown",e=>{if(e.target===o&&o.id!=="ovCart"){o.classList.remove("open");clearInterval(trackTimer);}}));
+
+renderChips();renderGrid();renderCart();
+</script>
+</body>
+</html>
